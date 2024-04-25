@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.practice.cricketscore.view.fragment.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="match_id"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_homeFragment_to_gameBoardFragment"
+            app:destination="@id/gameBoardFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createGameFragment"
+            app:destination="@id/createGameFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_userScreenFragment"
+            app:destination="@id/userScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createGameFragment"
+        android:name="com.practice.cricketscore.view.fragment.CreateGameFragment"
+        android:label="fragment_create_game"
+        tools:layout="@layout/fragment_create_game" />
+    <fragment
+        android:id="@+id/gameBoardFragment"
+        android:name="com.practice.cricketscore.view.fragment.GameBoardFragment"
+        android:label="fragment_game_board"
+        tools:layout="@layout/fragment_game_board" />
+    <fragment
+        android:id="@+id/userScreenFragment"
+        android:name="com.practice.cricketscore.view.fragment.UserScreenFragment"
+        android:label="fragment_user_screen"
+        tools:layout="@layout/fragment_user_screen" />
+</navigation>

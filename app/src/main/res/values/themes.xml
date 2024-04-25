@@ -1,0 +1,21 @@
+<resources>
+
+    <style name="Theme.CricketScore" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="colorSecondary">@color/black</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+    </style>
+
+    <style name="Theme.CricketScore.AppbarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
+
+    <style name="Theme.CricketScore.NavigationDrawerItemStyle">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Theme.CricketScore.AppbarTitle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">21sp</item>
+    </style>
+</resources>
