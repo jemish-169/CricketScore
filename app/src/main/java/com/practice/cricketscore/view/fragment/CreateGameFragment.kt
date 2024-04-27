@@ -53,26 +53,7 @@ class CreateGameFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            match.bowlingTeam.players.forEach {
-                if (it.name.isEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Player name can not be empty!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-            }
-            match.battingTeam.players.forEach {
-                if (it.name.isEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Player name can not be empty!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
-                }
-            }
+
             val batTeamName = binding.batTeamNameEt.text.toString().trim()
             val bowlTeamName = binding.bowlTeamNameEt.text.toString().trim()
 
