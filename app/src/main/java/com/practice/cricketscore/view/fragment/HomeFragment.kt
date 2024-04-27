@@ -27,15 +27,7 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater)
         repository = (activity as MainActivity).getRepository()
-        repository.getMatches(object : Repository.DataCallback {
-            override fun onDataLoaded(dataList: ArrayList<Match>) {
-                adaptData(dataList)
-            }
-
-            override fun onError(errorMessage: String?) {
-                adaptData(ArrayList())
-            }
-        })
+        refreshListener()
         adaptData(ArrayList())
         loadViews()
         return binding.root
@@ -45,7 +37,7 @@ class HomeFragment : Fragment() {
         if (dataList.isNotEmpty()) {
             binding.matchRv.visibility = View.VISIBLE
             binding.noMatches.visibility = View.GONE
-            val adapter = MatchAdapter(requireContext(), repository.getUserName(), dataList)
+            val adapter = MatchAdapter(requireContext(), dataList)
             binding.matchRv.adapter = adapter
             adapter.setOnClickListener(object : MatchAdapter.OnItemClickListener {
                 override fun onClick(position: Int, model: Match) {
@@ -67,41 +59,26 @@ class HomeFragment : Fragment() {
     private fun loadViews() {
         binding.matchRv.setHasFixedSize(true)
         binding.swipeRefreshLayout.setOnRefreshListener {
-            repository.getMatches(object : Repository.DataCallback {
-                override fun onDataLoaded(dataList: ArrayList<Match>) {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    adaptData(dataList)
-                }
-
-                override fun onError(errorMessage: String?) {
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    adaptData(ArrayList())
-                }
-            })
+           refreshListener()
         }
         binding.fabCreateMatch.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_createGameFragment)
         }
-        if (repository.getUserName().isBlank()) {
-            val dialog = Dialog(requireContext())
-            val dialogBinding = NameDialogBinding.inflate(LayoutInflater.from(requireContext()))
-            dialog.setContentView(dialogBinding.root)
+    }
 
-            dialogBinding.cancelButton.visibility = View.INVISIBLE
-            dialog.setCancelable(false)
-            dialogBinding.submitButton.setOnClickListener {
-                if (dialogBinding.userNameEt.text.isNullOrEmpty()) {
-                    dialogBinding.userNameTil.setErrorMessage("Name can not be empty!")
-                } else {
-                    repository.setUsername(dialogBinding.userNameEt.text.toString().trim())
-                    dialog.dismiss()
-                }
+    private fun refreshListener() {
+        binding.swipeRefreshLayout.isRefreshing = true
+        repository.getMatches(object : Repository.DataCallback {
+            override fun onDataLoaded(dataList: ArrayList<Match>) {
+                binding.swipeRefreshLayout.isRefreshing = false
+                adaptData(dataList)
             }
-            dialogBinding.userNameEt.doOnTextChanged { _, _, _, _ ->
-                dialogBinding.userNameTil.setErrorMessage("")
+
+            override fun onError(errorMessage: String?) {
+                binding.swipeRefreshLayout.isRefreshing = false
+                adaptData(ArrayList())
             }
-            dialog.show()
-        }
+        })
     }
 
     private fun TextInputLayout.setErrorMessage(message: String) {

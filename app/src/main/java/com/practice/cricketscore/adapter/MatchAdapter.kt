@@ -2,6 +2,7 @@ package com.practice.cricketscore.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,6 @@ import com.practice.cricketscore.utils.Constants
 
 class MatchAdapter(
     private val context: Context,
-    private val userName: String,
     private var matchList: ArrayList<Match>
 ) :
     RecyclerView.Adapter<MatchAdapter.ViewHolder>() {
@@ -48,9 +48,9 @@ class MatchAdapter(
                     "${this.matchState.ballNumber / 6}.${this.matchState.ballNumber % 6}"
                 binding.battingTeamRunRate.text =
                     if (this.matchState.ballNumber == 0)
-                        "RR - ${(this.matchState.run / (this.matchState.ballNumber + 1)) * 6}"
+                        "CR - ${(this.matchState.run / (this.matchState.ballNumber + 1)) * 6}"
                     else
-                        "RR - ${(this.matchState.run / (this.matchState.ballNumber)) * 6}"
+                        "CR - ${(this.matchState.run / (this.matchState.ballNumber)) * 6}"
                 binding.matchNumber.text = "Match ${position + 1}"
                 binding.matchStatus.text = this.matchStatus
 
@@ -61,6 +61,7 @@ class MatchAdapter(
                             R.color.red_background
                         )
                     )
+                    binding.matchUpdateButton.visibility = View.VISIBLE
                 } else {
                     binding.matchStatus.setBackgroundColor(
                         ContextCompat.getColor(
@@ -68,10 +69,8 @@ class MatchAdapter(
                             R.color.green_background
                         )
                     )
+                    binding.matchUpdateButton.visibility = View.GONE
                 }
-
-                binding.matchUpdateButton.visibility =
-                    if (this.matchCreatedBy == userName) View.VISIBLE else View.GONE
 
                 binding.root.setOnClickListener {
                     onItemClickListener?.onClick(position, this)
@@ -79,6 +78,16 @@ class MatchAdapter(
 
                 binding.matchUpdateButton.setOnClickListener {
                     onItemClickListener?.onClick(-1, this)
+                }
+                binding.shareMatch.setOnClickListener {
+                    val str =
+                        "${binding.matchNumber.text}\t${binding.matchTitle.text}\n${binding.battingTeamName.text} ${binding.battingTeamRunWicket.text}\n${binding.battingTeamRunRate.text}\t${binding.overs.text}"
+                    val shareIntent = Intent()
+                    shareIntent.setAction(Intent.ACTION_SEND)
+                    shareIntent.setType("text/plain")
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, str);
+                    context.startActivity(Intent.createChooser(shareIntent, "Choose an app"))
+
                 }
             }
         }

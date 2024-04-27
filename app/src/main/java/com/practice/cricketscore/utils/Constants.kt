@@ -1,6 +1,5 @@
 package com.practice.cricketscore.utils
 
-import com.practice.cricketscore.localData.LocalData
 import com.practice.cricketscore.models.Batsman
 import com.practice.cricketscore.models.BattingTeam
 import com.practice.cricketscore.models.Bowler
@@ -33,7 +32,6 @@ class Constants {
 
         const val RUNNING: String = "Running"
         const val COMPLETED: String = "Completed"
-        const val USER_NAME = "user_name"
 
         val INIT_MATCH = Match(
             id = UUID.randomUUID().toString(),
@@ -41,7 +39,6 @@ class Constants {
             bowlingTeam = BowlingTeam("", getBowlerList()),
             matchState = MatchState(0, 0, 0, Bowler(), Batsman(), Batsman()),
             matchStatus = RUNNING,
-            matchCreatedBy = LocalData.getUserName(),
             bowlingTimeline = ArrayList()
         )
     }

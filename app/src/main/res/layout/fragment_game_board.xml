@@ -162,19 +162,19 @@
                         android:id="@+id/gameBoardToolBar"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:padding="10dp"
-                        android:gravity="center"
                         android:layout_weight="1"
-                        tools:text="bheem vs chutki"
+                        android:gravity="center"
+                        android:padding="10dp"
                         android:textColor="@color/white"
-                        android:textSize="22sp" />
+                        android:textSize="22sp"
+                        tools:text="bheem vs chutki" />
 
                     <TextView
                         android:id="@+id/over_game"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:padding="10dp"
                         android:gravity="center"
+                        android:padding="10dp"
                         android:text="@string/declare"
                         android:textColor="@color/white"
                         android:textSize="22sp" />
@@ -185,7 +185,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background_blue"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -199,7 +198,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawablePadding="10dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/baseline_sports_baseball_24"
                         tools:text="Deep Tekchandani" />
@@ -210,32 +209,51 @@
                         android:layout_weight="1" />
 
                     <TextView
-                        android:id="@+id/baller_balls"
+                        android:id="@+id/baller_wickets"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="2dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
-                        tools:text="0.5 -" />
+                        tools:text="1" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:padding="1dp"
+                        android:textSize="18sp"
+                        android:text="@string/__" />
 
                     <TextView
                         android:id="@+id/baller_runs"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="2dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
-                        tools:text="8 -" />
+                        tools:text="8" />
 
                     <TextView
-                        android:id="@+id/baller_wickets"
+                        android:id="@+id/baller_balls"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="2dp"
-                        android:textColor="@color/white"
+                        android:layout_marginStart="5dp"
+                        android:textColor="@color/black"
                         android:textSize="18sp"
-                        tools:text="1" />
+                        tools:text="(0.5)" />
+
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:padding="2dp"
+                    android:text="@string/bowling_time_line"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/ball_rv"
@@ -390,18 +408,6 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/ball_unod"
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:layout_margin="2dp"
-                            android:background="@drawable/dark_btn_background"
-                            android:gravity="center"
-                            android:text="@string/undo"
-                            android:textColor="@color/green_text"
-                            android:textSize="22sp"
-                            android:textStyle="bold" />
-
-                        <TextView
                             android:id="@+id/ball_out"
                             android:layout_width="match_parent"
                             android:layout_height="65dp"
@@ -424,6 +430,19 @@
                             android:textColor="@color/white"
                             android:textSize="22sp"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/ball_undo"
+                            android:layout_width="match_parent"
+                            android:layout_height="65dp"
+                            android:layout_margin="2dp"
+                            android:background="@drawable/dark_btn_background"
+                            android:gravity="center"
+                            android:text="@string/undo"
+                            android:textColor="@color/green_text"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
                     </LinearLayout>
                 </TableRow>
             </TableLayout>

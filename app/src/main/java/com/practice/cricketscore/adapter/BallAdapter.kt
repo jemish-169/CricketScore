@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
@@ -42,12 +41,12 @@ class BallAdapter(
                 val drawable = ContextCompat.getDrawable(context, R.drawable.rounded_background)
 
                 when (this.runs) {
-                    4, 5 -> drawable?.let {
+                    7, 5 -> drawable?.let {
                         DrawableCompat.setTint(it, Color.parseColor("#d0f4de"))
                         binding.run.background = it
                     }
 
-                    6, 7 -> drawable?.let {
+                    6, 4 -> drawable?.let {
                         DrawableCompat.setTint(it, Color.parseColor("#e4c1f9"))
                         binding.run.background = it
                     }
@@ -63,23 +62,19 @@ class BallAdapter(
                     }
                 }
 
-                if (this.ballDesc != "") {
-                    binding.runDesc.visibility = View.VISIBLE
+                if (this.ballDesc != "")
                     binding.run.text = this.ballDesc
-                    if (this.ballDesc == "W") {
-                        drawable?.let {
-                            DrawableCompat.setTint(it, Color.parseColor("#f08080"))
-                            binding.run.background = it
-                        }
+                if (this.ballDesc == "W") {
+                    drawable?.let {
+                        DrawableCompat.setTint(it, Color.parseColor("#f08080"))
+                        binding.run.background = it
                     }
-                    else{
-                        drawable?.let {
-                            DrawableCompat.setTint(it, Color.parseColor("#fec89a"))
-                            binding.run.background = it
-                        }
+                } else {
+                    drawable?.let {
+                        DrawableCompat.setTint(it, Color.parseColor("#fec89a"))
+                        binding.run.background = it
                     }
-                } else
-                    binding.runDesc.visibility = View.INVISIBLE
+                }
             }
         }
     }

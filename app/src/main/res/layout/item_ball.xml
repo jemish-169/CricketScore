@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:gravity="center"
     android:layout_margin="10dp"
+    android:gravity="center"
     android:orientation="vertical">
 
     <TextView
@@ -13,16 +13,7 @@
         android:layout_height="45dp"
         android:background="@drawable/rounded_background"
         android:gravity="center"
-        tools:text="0"
         android:textColor="@color/black"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/run_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        tools:text="WB"
-        android:textColor="@color/black"
-        android:textSize="18sp" />
+        android:textSize="20sp"
+        tools:text="0" />
 </LinearLayout>

@@ -18,7 +18,6 @@ import com.practice.cricketscore.models.Match
 import com.practice.cricketscore.repository.Repository
 import com.practice.cricketscore.utils.Constants
 import com.practice.cricketscore.view.activity.MainActivity
-import kotlin.math.max
 
 class GameBoardFragment : Fragment() {
 
@@ -32,9 +31,18 @@ class GameBoardFragment : Fragment() {
         binding = FragmentGameBoardBinding.inflate(layoutInflater)
         repository = (activity as MainActivity).getRepository()
         editMatch = repository.editMatch
+        initViews()
         loadViews()
-        updateViews(editMatch)
+        updateViews()
         return binding.root
+    }
+
+    private fun initViews() {
+        if (editMatch.matchState.batsman1.name == "") editMatch.matchState.batsman1 =
+            editMatch.battingTeam.players[0]
+        if (editMatch.matchState.batsman2.name == "") editMatch.matchState.batsman2 =
+            editMatch.battingTeam.players[1]
+        if (editMatch.matchState.bowler.name == "") showBowlerDialog()
     }
 
 
@@ -47,115 +55,11 @@ class GameBoardFragment : Fragment() {
             findNavController().navigateUp()
         }
         binding.overGame.setOnClickListener {
-            editMatch.matchStatus = Constants.COMPLETED
-            val dialog = Dialog(requireContext())
-            val dialogBinding = MatchOverBinding.inflate(LayoutInflater.from(requireContext()))
-            dialog.setContentView(dialogBinding.root)
-
-            dialog.setCancelable(false)
-
-            dialogBinding.submitButton.setOnClickListener {
-                findNavController().navigateUp()
-            }
-            dialog.show()
+            gameOver()
         }
-        binding.ballUnod.setOnClickListener {
-
-            val run = editMatch.bowlingTimeline.last()
-
-            if (binding.tvBatsmanOneName.text == "") {
-                editMatch.matchState.batsman1 =
-                    editMatch.battingTeam.players[editMatch.matchState.wickets - 1]
-            }
-            if (binding.tvBatsmanTwoName.text == "") {
-                editMatch.matchState.batsman2 =
-                    editMatch.battingTeam.players[editMatch.matchState.wickets - 2]
-            }
-            if (binding.tvBallerName.text == "") {
-                editMatch.matchState.bowler =
-                    editMatch.bowlingTeam.players[editMatch.matchState.wickets - 1]
-            }
-
-            if (run.ballDesc == "") {
-                editMatch.matchState.run -= run.runs
-                editMatch.matchState.ballNumber--
-
-                editMatch.bowlingTimeline.removeAt(editMatch.bowlingTimeline.lastIndex)
-
-                editMatch.battingTeam.players.forEach {
-                    if (it.name == editMatch.matchState.batsman1.name) {
-                        it.balls--
-                        it.runs -= run.runs
-                    }
-                }
-                editMatch.bowlingTeam.players.forEach {
-                    if (it.name == editMatch.matchState.bowler.name) {
-                        it.balls--
-                        it.runs -= run.runs
-                    }
-                }
-
-                if (run.runs % 2 == 1) {
-                    val temp = editMatch.matchState.batsman2
-                    editMatch.matchState.batsman2 = editMatch.matchState.batsman1
-                    editMatch.matchState.batsman1 = temp
-                }
-
-                if (editMatch.matchState.ballNumber % 6 == 0) {
-                    val temp = editMatch.matchState.batsman2
-                    editMatch.matchState.batsman2 = editMatch.matchState.batsman1
-                    editMatch.matchState.batsman1 = temp
-                }
-            } else {
-                if (run.ballDesc == "W") {
-                    editMatch.matchState.ballNumber--
-                    editMatch.battingTeam.players.forEach {
-                        if (it.name == editMatch.matchState.batsman1.name) {
-                            it.balls--
-                            it.wicketReason = ""
-                        }
-                    }
-                    editMatch.bowlingTeam.players.forEach {
-                        if (it.name == editMatch.matchState.bowler.name) {
-                            it.balls--
-                            it.wickets--
-                        }
-                    }
-                }
-                editMatch.matchState.run -= run.runs
-
-                editMatch.bowlingTimeline.removeAt(editMatch.bowlingTimeline.lastIndex)
-
-                editMatch.battingTeam.players.forEach {
-                    if (it.name == editMatch.matchState.batsman1.name) {
-                        it.runs -= run.runs
-                    }
-                }
-                editMatch.bowlingTeam.players.forEach {
-                    if (it.name == editMatch.matchState.bowler.name) {
-                        it.runs -= run.runs
-                    }
-                }
-            }
-            updateViews(editMatch)
-            repository.updateMatch(editMatch)
+        binding.ballUndo.setOnClickListener {
+            undoBall()
         }
-
-//        binding.tvBallerName.setOnClickListener {
-//            if (editMatch.matchState.ballNumber % 6 == 0) {
-//                showDialogBowler("Select Bowler")
-//            }
-//        }
-//        binding.tvBatsmanOneName.setOnClickListener {
-//            if (editMatch.matchState.batsman1.name == "") {
-//                showDialogBatsmen1("Select BatsMan 1")
-//            }
-//        }
-//        binding.tvBatsmanTwoName.setOnClickListener {
-//            if (editMatch.matchState.batsman2.name == "") {
-//                showDialogBatsmen2("Select BatsMan 2")
-//            }
-//        }
 
         binding.run0.setOnClickListener { updateRun(0) }
         binding.run1.setOnClickListener { updateRun(1) }
@@ -173,12 +77,11 @@ class GameBoardFragment : Fragment() {
 
             editMatch.bowlingTeam.players.forEach {
                 if (it.name == editMatch.matchState.bowler.name) {
-                    it.balls++
                     it.runs++
                 }
             }
             editMatch.bowlingTimeline.add(BallAction(1, 0, "NB"))
-            updateViews(editMatch)
+            updateViews()
             repository.updateMatch(editMatch)
         }
         binding.ballWide.setOnClickListener {
@@ -188,12 +91,11 @@ class GameBoardFragment : Fragment() {
 
             editMatch.bowlingTeam.players.forEach {
                 if (it.name == editMatch.matchState.bowler.name) {
-                    it.balls++
                     it.runs++
                 }
             }
             editMatch.bowlingTimeline.add(BallAction(1, 0, "WD"))
-            updateViews(editMatch)
+            updateViews()
             repository.updateMatch(editMatch)
         }
         binding.ballOut.setOnClickListener {
@@ -201,7 +103,7 @@ class GameBoardFragment : Fragment() {
             editMatch.matchState.ballNumber++
             editMatch.battingTeam.players.forEach {
                 if (it.name == editMatch.matchState.batsman1.name) {
-                    it.wicketReason = "Run Out"
+                    it.wicketReason = "Caught out"
                     it.balls++
                 }
             }
@@ -215,17 +117,7 @@ class GameBoardFragment : Fragment() {
             editMatch.matchState.batsman1 = Batsman()
 
             if (editMatch.matchState.wickets >= 4) {
-                editMatch.matchStatus = Constants.COMPLETED
-                val dialog = Dialog(requireContext())
-                val dialogBinding = MatchOverBinding.inflate(LayoutInflater.from(requireContext()))
-                dialog.setContentView(dialogBinding.root)
-
-                dialog.setCancelable(false)
-
-                dialogBinding.submitButton.setOnClickListener {
-                    findNavController().navigateUp()
-                }
-                dialog.show()
+                gameOver()
             } else {
                 editMatch.matchState.batsman1 =
                     editMatch.battingTeam.players[editMatch.matchState.wickets + 1]
@@ -234,44 +126,96 @@ class GameBoardFragment : Fragment() {
                 val temp = editMatch.matchState.batsman2
                 editMatch.matchState.batsman2 = editMatch.matchState.batsman1
                 editMatch.matchState.batsman1 = temp
+                showBowlerDialog()
             }
-            updateViews(editMatch)
+            updateViews()
             repository.updateMatch(editMatch)
         }
     }
 
-    private fun updateRun(run: Int) {
+    private fun undoBall() {
 
-        if (binding.tvBatsmanOneName.text == "") {
-            editMatch.matchState.batsman1 =
-                editMatch.battingTeam.players[editMatch.matchState.wickets]
+        if (editMatch.matchState.ballNumber <= 0) return
+
+        val run = editMatch.bowlingTimeline.last()
+
+        editMatch.matchState.ballNumber--
+        editMatch.matchState.run -= run.runs
+
+
+        if (editMatch.matchState.ballNumber % 6 == 0) {
+            val temp = editMatch.matchState.batsman2
+            editMatch.matchState.batsman2 = editMatch.matchState.batsman1
+            editMatch.matchState.batsman1 = temp
+
+            showBowlerDialog()
         }
-        if (binding.tvBatsmanTwoName.text == "") {
-            editMatch.matchState.batsman2 =
-                editMatch.battingTeam.players[editMatch.matchState.wickets + 1]
+        if (run.runs % 2 == 1) {
+            val temp = editMatch.matchState.batsman2
+            editMatch.matchState.batsman2 = editMatch.matchState.batsman1
+            editMatch.matchState.batsman1 = temp
         }
-        if (binding.tvBallerName.text == "") {
-            editMatch.matchState.bowler =
-                editMatch.bowlingTeam.players[editMatch.matchState.wickets]
+        if (run.ballDesc == "W")
+            showBatsmanDialog()
+
+        editMatch.bowlingTimeline.removeAt(editMatch.bowlingTimeline.lastIndex)
+
+
+        if (run.ballDesc == "") {
+
+            editMatch.battingTeam.players.forEach {
+                if (it.name == editMatch.matchState.batsman1.name) {
+                    it.balls--
+                    it.runs -= run.runs
+                }
+            }
+            editMatch.bowlingTeam.players.forEach {
+                if (it.name == editMatch.matchState.bowler.name) {
+                    it.balls--
+                    it.runs -= run.runs
+                }
+            }
+        } else if (run.ballDesc == "W") {
+            editMatch.battingTeam.players.forEach {
+                if (it.name == editMatch.matchState.batsman1.name) {
+                    it.runs -= run.runs
+                    it.balls--
+                    it.wicketReason = ""
+                }
+            }
+            editMatch.bowlingTeam.players.forEach {
+                if (it.name == editMatch.matchState.bowler.name) {
+                    it.runs -= run.runs
+                    it.balls--
+                    it.wickets--
+                }
+            }
+        } else {
+            editMatch.bowlingTeam.players.forEach {
+                if (it.name == editMatch.matchState.bowler.name) {
+                    it.runs--
+                    it.wickets--
+                    it.extras--
+                }
+            }
+            editMatch.matchState.ballNumber++
         }
+        updateViews()
+        repository.updateMatch(editMatch)
+    }
+
+    private fun updateRun(run: Int) {
 
         editMatch.matchState.run += run
         editMatch.matchState.ballNumber++
 
-        editMatch.bowlingTimeline.add(BallAction(run, 0, ""))
+        editMatch.matchState.batsman1.runs += run
+        editMatch.matchState.batsman1.balls++
 
-        editMatch.battingTeam.players.forEach {
-            if (it.name == editMatch.matchState.batsman1.name) {
-                it.balls++
-                it.runs += run
-            }
-        }
-        editMatch.bowlingTeam.players.forEach {
-            if (it.name == editMatch.matchState.bowler.name) {
-                it.balls++
-                it.runs += run
-            }
-        }
+        editMatch.matchState.bowler.runs += run
+        editMatch.matchState.bowler.balls++
+
+        editMatch.bowlingTimeline.add(BallAction(run, 0, ""))
 
         if (run % 2 == 1) {
             val temp = editMatch.matchState.batsman2
@@ -283,92 +227,17 @@ class GameBoardFragment : Fragment() {
             val temp = editMatch.matchState.batsman2
             editMatch.matchState.batsman2 = editMatch.matchState.batsman1
             editMatch.matchState.batsman1 = temp
+            showBowlerDialog()
 
-            editMatch.matchState.bowler =
-                editMatch.bowlingTeam.players[editMatch.matchState.ballNumber / 6]
         }
 
-        updateViews(editMatch)
+        updateViews()
         repository.updateMatch(editMatch)
 
     }
 
-    private fun showDialogBatsmen1(s: String) {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = PlayerDialogBinding.inflate(LayoutInflater.from(requireContext()))
-        dialog.setContentView(dialogBinding.root)
 
-        dialog.setCancelable(false)
-
-        dialogBinding.selectPlayer.text = s
-
-        dialogBinding.tv1.text = editMatch.bowlingTeam.players[0].name
-        dialogBinding.tv2.text = editMatch.bowlingTeam.players[1].name
-        dialogBinding.tv3.text = editMatch.bowlingTeam.players[2].name
-        dialogBinding.tv4.text = editMatch.bowlingTeam.players[3].name
-        dialogBinding.tv5.text = editMatch.bowlingTeam.players[4].name
-
-        dialogBinding.tv1.setOnClickListener {
-            editMatch.matchState.batsman1 = editMatch.battingTeam.players[0]
-            dialog.dismiss()
-        }
-        dialogBinding.tv2.setOnClickListener {
-            editMatch.matchState.batsman1 = editMatch.battingTeam.players[1]
-            dialog.dismiss()
-        }
-        dialogBinding.tv3.setOnClickListener {
-            editMatch.matchState.batsman1 = editMatch.battingTeam.players[2]
-            dialog.dismiss()
-        }
-        dialogBinding.tv4.setOnClickListener {
-            editMatch.matchState.batsman1 = editMatch.battingTeam.players[3]
-            dialog.dismiss()
-        }
-        dialogBinding.tv5.setOnClickListener {
-            editMatch.matchState.batsman1 = editMatch.battingTeam.players[4]
-            dialog.dismiss()
-        }
-    }
-
-    private fun showDialogBatsmen2(s: String) {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = PlayerDialogBinding.inflate(LayoutInflater.from(requireContext()))
-        dialog.setContentView(dialogBinding.root)
-
-        dialog.setCancelable(false)
-
-        dialogBinding.selectPlayer.text = s
-
-        dialogBinding.tv1.text = editMatch.battingTeam.players[0].name
-        dialogBinding.tv2.text = editMatch.battingTeam.players[1].name
-        dialogBinding.tv3.text = editMatch.battingTeam.players[2].name
-        dialogBinding.tv4.text = editMatch.battingTeam.players[3].name
-        dialogBinding.tv5.text = editMatch.battingTeam.players[4].name
-
-        dialogBinding.tv1.setOnClickListener {
-            editMatch.matchState.batsman2 = editMatch.battingTeam.players[0]
-            dialog.dismiss()
-        }
-        dialogBinding.tv2.setOnClickListener {
-            editMatch.matchState.batsman2 = editMatch.battingTeam.players[1]
-            dialog.dismiss()
-        }
-        dialogBinding.tv3.setOnClickListener {
-            editMatch.matchState.batsman2 = editMatch.battingTeam.players[2]
-            dialog.dismiss()
-        }
-        dialogBinding.tv4.setOnClickListener {
-            editMatch.matchState.batsman2 = editMatch.battingTeam.players[3]
-            dialog.dismiss()
-        }
-        dialogBinding.tv5.setOnClickListener {
-            editMatch.matchState.batsman2 = editMatch.battingTeam.players[4]
-            dialog.dismiss()
-        }
-
-    }
-
-    private fun showDialogBowler(s: String) {
+    private fun showBowlerDialog() {
 
         val dialog = Dialog(requireContext())
         val dialogBinding = PlayerDialogBinding.inflate(LayoutInflater.from(requireContext()))
@@ -376,7 +245,6 @@ class GameBoardFragment : Fragment() {
 
         dialog.setCancelable(false)
 
-        dialogBinding.selectPlayer.text = s
 
         dialogBinding.tv1.text = editMatch.bowlingTeam.players[0].name
         dialogBinding.tv2.text = editMatch.bowlingTeam.players[1].name
@@ -386,41 +254,81 @@ class GameBoardFragment : Fragment() {
 
         dialogBinding.tv1.setOnClickListener {
             editMatch.matchState.bowler = editMatch.bowlingTeam.players[0]
+            updateViews()
             dialog.dismiss()
         }
         dialogBinding.tv2.setOnClickListener {
             editMatch.matchState.bowler = editMatch.bowlingTeam.players[1]
+            updateViews()
             dialog.dismiss()
         }
         dialogBinding.tv3.setOnClickListener {
             editMatch.matchState.bowler = editMatch.bowlingTeam.players[2]
+            updateViews()
             dialog.dismiss()
         }
         dialogBinding.tv4.setOnClickListener {
             editMatch.matchState.bowler = editMatch.bowlingTeam.players[3]
+            updateViews()
             dialog.dismiss()
         }
         dialogBinding.tv5.setOnClickListener {
             editMatch.matchState.bowler = editMatch.bowlingTeam.players[4]
+            updateViews()
             dialog.dismiss()
         }
+        dialog.show()
+    }
 
+    private fun showBatsmanDialog() {
+
+        val dialog = Dialog(requireContext())
+        val dialogBinding = PlayerDialogBinding.inflate(LayoutInflater.from(requireContext()))
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.setCancelable(false)
+
+
+        dialogBinding.tv1.text = editMatch.battingTeam.players[0].name
+        dialogBinding.tv2.text = editMatch.battingTeam.players[1].name
+        dialogBinding.tv3.text = editMatch.battingTeam.players[2].name
+        dialogBinding.tv4.text = editMatch.battingTeam.players[3].name
+        dialogBinding.tv5.text = editMatch.battingTeam.players[4].name
+
+        dialogBinding.tv1.setOnClickListener {
+            editMatch.matchState.batsman1 = editMatch.battingTeam.players[0]
+            updateViews()
+            dialog.dismiss()
+        }
+        dialogBinding.tv2.setOnClickListener {
+            editMatch.matchState.batsman1 = editMatch.battingTeam.players[1]
+            updateViews()
+            dialog.dismiss()
+        }
+        dialogBinding.tv3.setOnClickListener {
+            editMatch.matchState.batsman1 = editMatch.battingTeam.players[2]
+            updateViews()
+            dialog.dismiss()
+        }
+        dialogBinding.tv4.setOnClickListener {
+            editMatch.matchState.batsman1 = editMatch.battingTeam.players[3]
+            updateViews()
+            dialog.dismiss()
+        }
+        dialogBinding.tv5.setOnClickListener {
+            editMatch.matchState.batsman1 = editMatch.battingTeam.players[4]
+            updateViews()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     @SuppressLint("SetTextI18n")
-    fun updateViews(match: Match) {
-
+    fun updateViews() {
+        val match = editMatch
         if (editMatch.matchState.ballNumber >= 30) {
-            val dialog = Dialog(requireContext())
-            val dialogBinding = MatchOverBinding.inflate(LayoutInflater.from(requireContext()))
-            dialog.setContentView(dialogBinding.root)
-
-            dialog.setCancelable(false)
-
-            dialogBinding.submitButton.setOnClickListener {
-                findNavController().navigateUp()
-            }
-            dialog.show()
+            gameOver()
+            return
         }
 
         binding.gameBoardToolBar.text = match.battingTeam.name + " vs " + match.bowlingTeam.name
@@ -431,29 +339,45 @@ class GameBoardFragment : Fragment() {
 
         if (match.matchState.ballNumber == 0)
             binding.requireRunRate.text =
-                "CR - ${(match.matchState.run / (match.matchState.ballNumber + 1)) * 6}"
+                "CR - ${Math.round(match.matchState.run.toDouble() / (match.matchState.ballNumber + 1).toDouble()) * 6.000}"
         else binding.requireRunRate.text =
-            "CR - ${(match.matchState.run / match.matchState.ballNumber) * 6}"
+            "CR - ${Math.round(match.matchState.run.toDouble() / match.matchState.ballNumber.toDouble()) * 6.000}"
 
         binding.tvBatsmanOneName.text = match.matchState.batsman1.name
         binding.tvBatsmanTwoName.text = match.matchState.batsman2.name
 
         binding.tvBatsmanTwoRun.text =
-            "${match.matchState.batsman2.runs}(${match.matchState.batsman1.balls})"
+            "${match.matchState.batsman2.runs}(${match.matchState.batsman2.balls})"
         binding.tvBatsmanOneRun.text =
-            "${match.matchState.batsman1.runs}(${match.matchState.batsman2.balls})"
+            "${match.matchState.batsman1.runs}(${match.matchState.batsman1.balls})"
 
         binding.tvBallerName.text = match.matchState.bowler.name
         binding.ballerBalls.text =
-            "${match.matchState.bowler.balls / 6}.${match.matchState.bowler.balls % 6}"
+            "(${match.matchState.bowler.balls / 6}.${match.matchState.bowler.balls % 6})"
         binding.ballerRuns.text = match.matchState.bowler.runs.toString()
         binding.ballerWickets.text = match.matchState.bowler.wickets.toString()
 
         val adapter = BallAdapter(
             requireContext(),
-            match.bowlingTimeline.takeLast(max(match.bowlingTimeline.size % 7, 1))
+            match.bowlingTimeline
         )
         binding.ballRv.adapter = adapter
+        binding.ballRv.scrollToPosition(match.bowlingTimeline.size - 1)
     }
 
+    private fun gameOver() {
+        editMatch.matchStatus = Constants.COMPLETED
+        val dialog = Dialog(requireContext())
+        val dialogBinding = MatchOverBinding.inflate(LayoutInflater.from(requireContext()))
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.setCancelable(false)
+
+        dialogBinding.submitButton.setOnClickListener {
+            dialog.dismiss()
+            repository.updateMatch(editMatch)
+            findNavController().navigateUp()
+        }
+        dialog.show()
+    }
 }

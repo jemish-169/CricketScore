@@ -33,8 +33,12 @@
     <string name="wickets">Wickets</string>
     <string name="_5">5</string>
     <string name="_7">7</string>
-    <string name="select_player">Select player</string>
+    <string name="select_player">Select Bowler</string>
     <string name="exit">Exit</string>
     <string name="match_over">Match Over!</string>
     <string name="declare">Declare</string>
+    <string name="bowling_time_line">Bowling Time line</string>
+    <string name="__">/</string>
+    <string name="overs">Overs</string>
+    <string name="share">Share</string>
 </resources>

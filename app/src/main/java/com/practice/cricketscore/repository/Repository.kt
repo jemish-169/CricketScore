@@ -6,7 +6,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.practice.cricketscore.localData.LocalData
 import com.practice.cricketscore.models.Match
 import com.practice.cricketscore.utils.Constants
 
@@ -39,7 +38,7 @@ class Repository {
         })
     }
 
-    fun updateMatch(match:Match) {
+    fun updateMatch(match: Match) {
         val matchKey = match.id
         Log.d("TAG", "match - key\t$match")
         matchKey.let { it ->
@@ -71,14 +70,6 @@ class Repository {
             }
         })
 
-    }
-
-    fun getUserName(): String {
-        return LocalData.getUserName()
-    }
-
-    fun setUsername(userName: String) {
-        return LocalData.setUserName(userName)
     }
 
     interface DataCallback {

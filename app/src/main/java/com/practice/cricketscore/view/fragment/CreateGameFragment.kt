@@ -2,15 +2,14 @@ package com.practice.cricketscore.view.fragment
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
-import com.practice.cricketscore.R
 import com.practice.cricketscore.adapter.BatsmanAdapter
 import com.practice.cricketscore.adapter.BowlerAdapter
 import com.practice.cricketscore.databinding.FragmentCreateGameBinding
@@ -52,6 +51,27 @@ class CreateGameFragment : Fragment() {
             if (binding.bowlTeamNameEt.text.isNullOrEmpty()) {
                 binding.bowlTeamNameTil.setErrorMessage("Name can not be empty!")
                 return@setOnClickListener
+            }
+
+            match.bowlingTeam.players.forEach {
+                if (it.name.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Player name can not be empty!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
+            }
+            match.battingTeam.players.forEach {
+                if (it.name.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Player name can not be empty!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@setOnClickListener
+                }
             }
             val batTeamName = binding.batTeamNameEt.text.toString().trim()
             val bowlTeamName = binding.bowlTeamNameEt.text.toString().trim()

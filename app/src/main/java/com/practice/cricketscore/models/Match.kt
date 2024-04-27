@@ -1,6 +1,5 @@
 package com.practice.cricketscore.models
 
-import com.practice.cricketscore.localData.LocalData
 import com.practice.cricketscore.utils.Constants
 import java.util.UUID
 
@@ -10,6 +9,5 @@ data class Match(
     val bowlingTeam: BowlingTeam = BowlingTeam(),
     val matchState: MatchState = MatchState(),
     var matchStatus: String = Constants.RUNNING,
-    val matchCreatedBy: String = LocalData.getUserName(),
     val bowlingTimeline: ArrayList<BallAction> = ArrayList()
 )

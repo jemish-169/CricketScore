@@ -117,10 +117,24 @@
             android:layout_gravity="bottom|end"
             android:letterSpacing="0.05"
             android:textColor="@color/black"
+            android:layout_marginEnd="2dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:backgroundTint="@color/medium_gray"
+            app:backgroundTint="#BDBDBD"
             app:cornerRadius="6dp" />
+
+        <ImageView
+            android:id="@+id/share_match"
+            android:layout_width="wrap_content"
+            android:src="@drawable/baseline_reply_all_24"
+            android:rotationY="180"
+            android:paddingVertical="8dp"
+            android:paddingEnd="8dp"
+            android:background="@color/white"
+            android:layout_gravity="end|center_vertical"
+            android:contentDescription="@string/share"
+            android:layout_height="wrap_content"
+            tools:ignore="RtlSymmetry" />
 
     </FrameLayout>
 </LinearLayout>
