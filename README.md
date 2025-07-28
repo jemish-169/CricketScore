@@ -1,8 +1,5 @@
 # Cricket Score App
 
-## Overview
-**Cricket Score App** is a dynamic and user-friendly app designed to keep track of cricket matches in real time. Built with Android, this app enables users to create matches with 5-player teams, manage the match score seamlessly, and provide live updates to viewers. The app automates score calculations, player strikes, and allows sharing of the current match state.
-
 ## Features
 - **Create Matches**: Users can create matches with 5-player teams and manage the game as it progresses.
 - **Real-Time Score Updates**: Match scores are updated in real-time, with viewers able to follow the match as it happens.
