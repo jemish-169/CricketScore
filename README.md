@@ -13,12 +13,6 @@
 - **Single Activity Architecture**: The entire app is built on a single activity with multiple fragments, providing a streamlined and efficient structure.
 - **Smooth Fragment Animations**: Introduced fluid animations between fragments for a polished user experience.
 
-## Code Structure
-The app follows a modular approach to ensure clarity and maintainability:
-- **Activity**: Acts as the host for all fragments, managing the overall app structure.
-- **Fragments**: Each fragment represents a different part of the app, such as match creation, score updates, and live match viewing.
-- **Firebase Integration**: Handles real-time data updates and synchronization across all devices viewing the match.
-
 ## Screenshots  
 
 <table>
